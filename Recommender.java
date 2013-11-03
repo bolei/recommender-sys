@@ -12,6 +12,7 @@ public class Recommender {
 	private static Configurator config;
 
 	public static void main(String[] argv) throws IOException {
+		long begin = System.currentTimeMillis();
 		config = new Configurator(argv);
 
 		// check if need to build index
@@ -38,6 +39,8 @@ public class Recommender {
 		default:
 			break;
 		}
+		long end = System.currentTimeMillis();
+		System.err.println("time past:" + (end - begin));
 	}
 
 }

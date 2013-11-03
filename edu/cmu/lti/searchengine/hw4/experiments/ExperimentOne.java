@@ -40,6 +40,11 @@ public class ExperimentOne extends Experiment {
 		DataRow queryRow = indexData.getDataVector().get(userId);
 		DataRow predictRow = knn
 				.prediction(indexData.getDataVector(), queryRow);
+
+		if (predictRow.getMovieScores().get(movieId) == null) {
+			return 0;
+		}
+
 		return predictRow.getMovieScores().get(movieId).getScore();
 	}
 }

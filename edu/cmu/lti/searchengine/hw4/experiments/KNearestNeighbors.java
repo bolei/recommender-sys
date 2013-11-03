@@ -25,8 +25,7 @@ public class KNearestNeighbors {
 	}
 
 	public DataRow prediction(HashMap<Integer, DataRow> train, DataRow query) {
-		FixedSizeTreeMap<Double, DataRow> kwindow = new FixedSizeTreeMap<Double, DataRow>(
-				k);
+		FixedSizeTreeMap kwindow = new FixedSizeTreeMap(k);
 		double sim;
 		for (Entry<Integer, DataRow> entry : train.entrySet()) {
 			sim = simCal.getSimilarity(entry.getValue(), query);
@@ -49,7 +48,7 @@ public class KNearestNeighbors {
 	 * @param <K>
 	 * @param <V>
 	 */
-	private class FixedSizeTreeMap<K, V> extends TreeMap<K, V> {
+	private class FixedSizeTreeMap extends TreeMap<Double, DataRow> {
 
 		private static final long serialVersionUID = -3646662497160905763L;
 		private final int MAX_SIZE;
@@ -59,12 +58,12 @@ public class KNearestNeighbors {
 		}
 
 		@Override
-		public V put(K key, V value) {
+		public DataRow put(Double key, DataRow value) {
 
 			if (this.size() >= MAX_SIZE && !this.containsKey(key)) {
 				// no space
-				K leastKey = this.firstKey();
-				if (this.comparator().compare(key, leastKey) <= 0) {
+				Double leastKey = this.firstKey();
+				if (key - leastKey < 0.d) {
 					// do nothing
 					return null;
 				} else {
@@ -72,11 +71,11 @@ public class KNearestNeighbors {
 					this.remove(leastKey);
 
 					// then add
-					this.put(key, value); // O(nlogn)
+					super.put(key, value); // O(nlogn)
 					return null;
 				}
 			} else { // there's still space in the map
-				this.put(key, value);
+				super.put(key, value);
 				return null;
 			}
 		}

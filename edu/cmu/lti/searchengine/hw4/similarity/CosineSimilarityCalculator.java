@@ -8,8 +8,12 @@ public class CosineSimilarityCalculator implements SimilarityCalculator {
 
 	@Override
 	public double getSimilarity(DataRow row1, DataRow row2) {
-		return dotSimCal.getSimilarity(row1, row2)
-				/ (row1.getVectorLength() * row2.getVectorLength());
+		double row1Len = row1.getVectorLength(), row2Len = row2
+				.getVectorLength();
+		if (row1Len * row2Len == 0) {
+			return 0;
+		}
+		return dotSimCal.getSimilarity(row1, row2) / (row1Len * row2Len);
 	}
 
 }
