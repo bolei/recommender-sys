@@ -4,3 +4,6 @@
 *.jar
 *.war
 *.ear
+/test-all.csv
+/training_set.csv
+/indexFile.txt

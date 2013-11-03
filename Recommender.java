@@ -1,25 +1,43 @@
+import java.io.File;
 import java.io.IOException;
 
 import edu.cmu.lti.searchengine.hw4.Configurator;
+import edu.cmu.lti.searchengine.hw4.DataIndex;
+import edu.cmu.lti.searchengine.hw4.IndexBuilder;
+import edu.cmu.lti.searchengine.hw4.experiments.ExperimentOne;
+import edu.cmu.lti.searchengine.hw4.experiments.ExperimentType;
 
 public class Recommender {
 
 	private static Configurator config;
 
 	public static void main(String[] argv) throws IOException {
-
 		config = new Configurator(argv);
 
-		// If you see these outputs, it means you have successfully compiled and
-		// run the code.
-		// Then you can remove these three lines if you want.
-		System.out.println("Training File : " + config.getTrainFile());
-		System.out.println("Test File : " + config.getTestFile());
-		System.out.println("Output File : " + config.getOutputFile());
+		// check if need to build index
+		String indexFilePath = config.getProperty("indexFile");
+		File indexFile = new File(indexFilePath);
+		DataIndex index;
+		IndexBuilder indexBuilder = new IndexBuilder();
 
-		// Implement your recommendation modules using trainFile and testFile.
-		// And output the prediction scores to outputFile.
+		boolean isByUser = config.isByUser();
 
+		if (indexFile.exists() == false) {
+			// if no index file, build one
+			File trainingFile = new File(
+					config.getProperty(Configurator.CONFIG_TRAIN_FILE));
+			index = indexBuilder.buildIndex(trainingFile, indexFile, isByUser);
+		} else {
+			index = indexBuilder.loadIndex(indexFile, isByUser);
+		}
+		switch (ExperimentType.valueOf(config.getProperty("expType"))) {
+		case EXP_1:
+			new ExperimentOne(config, index).runExperiment();
+			break;
+
+		default:
+			break;
+		}
 	}
 
 }

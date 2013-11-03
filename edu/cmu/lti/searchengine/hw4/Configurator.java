@@ -2,54 +2,68 @@ package edu.cmu.lti.searchengine.hw4;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.Properties;
 
-public class Configurator {
-	private String trainFile = "/home/bolei/Works/data/11641-hw4/training_set.csv";
-	private String testFile = "/home/bolei/Works/data/11641-hw4/test-all.csv";
-	private String outputFile = "/home/bolei/Desktop/output.txt";
-	private String configFile = "config.properties";
+import edu.cmu.lti.searchengine.hw4.experiments.ExperimentType;
 
-	private ExperimentType expType = ExperimentType.EXP_1;
+public class Configurator extends Properties {
+	private static final long serialVersionUID = -851031049977917583L;
+
+	public static final String CONFIG_TRAIN_FILE = "trainFile";
+	public static final String CONFIG_TEST_FILE = "testFile";
+	public static final String CONFIG_OUTPUT_FILE = "outputFile";
 
 	public Configurator(String[] argv) throws IOException {
 		if (argv.length < 3) {
 			throw new IllegalArgumentException("Illegal number of arguments");
 		}
-		trainFile = argv[0];
-		testFile = argv[1];
-		outputFile = argv[2];
-		if (argv.length > 3) {
+		this.put(CONFIG_TRAIN_FILE, argv[0]);
+		this.put(CONFIG_TEST_FILE, argv[1]);
+		this.put(CONFIG_OUTPUT_FILE, argv[2]);
+
+		String configFile = "config.properties";
+		if (argv.length > 3) { // configuration file specified
 			configFile = argv[3];
 		}
-		// TODO: populate properties from configuration file
+
 		Properties config = new Properties();
 		config.load(new FileReader(configFile));
-		expType = ExperimentType.valueOf(config.getProperty("expType"));
+		this.putAll(config);
 	}
 
-	public String getTrainFile() {
-		return trainFile;
+	public static void closeReader(Reader reader) {
+		if (reader != null) {
+			try {
+				reader.close();
+				reader = null;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
-	public String getTestFile() {
-		return testFile;
+	public static void closeWriter(Writer writer) {
+		if (writer != null) {
+			try {
+				writer.close();
+				writer = null;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
-	public String getOutputFile() {
-		return outputFile;
+	public boolean isByUser() {
+		ExperimentType expType = ExperimentType.valueOf(getProperty("expType"));
+		switch (expType) {
+		case EXP_1:
+			return true;
+		case EXP_2:
+			return false;
+		default:
+			return false;
+		}
 	}
-
-	public String getConfigFile() {
-		return configFile;
-	}
-
-	public ExperimentType getExpType() {
-		return expType;
-	}
-
-	private enum ExperimentType {
-		EXP_1, EXP_2, EXP_3, EXP_4
-	}
-
 }
