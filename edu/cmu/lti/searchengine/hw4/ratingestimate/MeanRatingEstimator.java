@@ -23,7 +23,7 @@ public class MeanRatingEstimator extends RatingEstimator {
 		average = 0;
 		for (Entry<Double, Integer> entry : kwindow.entrySet()) {
 			vectorId = entry.getValue();
-			rating = dataIndex.getDataVector().get(vectorId).getMovieScores()
+			rating = dataIndex.getByUserIndex().get(vectorId).getMovieScores()
 					.get(columnId);
 			if (rating != null) {
 				average += rating.getScore();

@@ -1,20 +1,23 @@
 package edu.cmu.lti.searchengine.hw4;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class DataIndex {
 	private Set<Integer> allUserIds;
 	private Set<Integer> allMovieIds;
 
-	private HashMap<Integer, DataRow> dataVector;
+	private HashMap<Integer, DataRow> byUserIndex, byMovieIndex;
 
 	public DataIndex(Set<Integer> allUserIds, Set<Integer> allMovieIds,
-
-	HashMap<Integer, DataRow> dataVector) {
+			HashMap<Integer, DataRow> byUserIndex,
+			HashMap<Integer, DataRow> byMovieIndex) {
 		this.allMovieIds = allMovieIds;
 		this.allUserIds = allUserIds;
-		this.dataVector = dataVector;
+		this.byUserIndex = byUserIndex;
+		this.byMovieIndex = byMovieIndex;
 	}
 
 	public Set<Integer> getAllUserIds() {
@@ -25,8 +28,108 @@ public class DataIndex {
 		return allMovieIds;
 	}
 
-	public HashMap<Integer, DataRow> getDataVector() {
-		return dataVector;
+	public HashMap<Integer, DataRow> getByUserIndex() {
+		return byUserIndex;
+	}
+
+	public HashMap<Integer, DataRow> getByMovieIndex() {
+		return byMovieIndex;
+	}
+
+	public void dumpStat() {
+		System.out.println("Total number of movies: " + allMovieIds.size());
+		System.out.println("Total number of users: " + allUserIds.size());
+
+		int count1 = 0, count3 = 0, count5 = 0;
+		int totalCount = 0;
+		double totalRating = 0d;
+
+		double delta = 1e-5;
+
+		TreeMap<Integer, Rating> movieScores;
+		for (Entry<Integer, DataRow> entry : byUserIndex.entrySet()) {
+			movieScores = entry.getValue().getMovieScores();
+			for (Entry<Integer, Rating> movScr : movieScores.entrySet()) {
+				totalCount++;
+				totalRating += movScr.getValue().getScore();
+				if (Math.abs(movScr.getValue().getScore() + 2) < delta) {
+					count1++;
+				} else if (Math.abs(movScr.getValue().getScore()) < delta) {
+					count3++;
+				} else if (Math.abs(movScr.getValue().getScore() - 2) < delta) {
+					count5++;
+				}
+			}
+		}
+
+		double averageRating = totalRating / totalCount;
+
+		System.out.println("Number of times any movie rated '1': " + count1);
+		System.out.println("Number of times any movie rated '3': " + count3);
+		System.out.println("Number of times any movie rated '5': " + count5);
+		System.out.println("Average movie rating across all users movies: "
+				+ averageRating);
+
+		System.out.println("For user ID 1234576");
+		int userId = 1234576;
+		DataRow userRow = byUserIndex.get(userId);
+		count1 = 0;
+		count3 = 0;
+		count5 = 0;
+		totalCount = 0;
+		totalRating = 0d;
+		for (Entry<Integer, Rating> entry : userRow.getMovieScores().entrySet()) {
+			totalCount++;
+			totalRating += entry.getValue().getScore();
+			if (Math.abs(entry.getValue().getScore() + 2) < delta) {
+				count1++;
+			} else if (Math.abs(entry.getValue().getScore()) < delta) {
+				count3++;
+			} else if (Math.abs(entry.getValue().getScore() - 2) < delta) {
+				count5++;
+			}
+		}
+		averageRating = totalRating / totalCount;
+		System.out.println("Number of movies rated: " + totalCount);
+		System.out.println("Number of times the user gave a '1' rating"
+				+ count1);
+		System.out.println("Number of times the user gave a '3' rating"
+				+ count3);
+		System.out.println("Number of times the user gave a '5' rating"
+				+ count5);
+		System.out.println("Average movie rating for this user: "
+				+ averageRating);
+
+		System.out.println("For movie ID 4321");
+		int movieId = 4321;
+		DataRow movieRow = byMovieIndex.get(movieId);
+		count1 = 0;
+		count3 = 0;
+		count5 = 0;
+		totalCount = 0;
+		totalRating = 0d;
+		for (Entry<Integer, Rating> entry : movieRow.getMovieScores()
+				.entrySet()) {
+			totalCount++;
+			totalRating += entry.getValue().getScore();
+			if (Math.abs(entry.getValue().getScore() + 2) < delta) {
+				count1++;
+			} else if (Math.abs(entry.getValue().getScore()) < delta) {
+				count3++;
+			} else if (Math.abs(entry.getValue().getScore() - 2) < delta) {
+				count5++;
+			}
+		}
+		averageRating = totalRating / totalCount;
+		System.out.println("Number of users rating this movie: " + totalCount);
+		System.out.println("Number of times the user gave a '1' rating"
+				+ count1);
+		System.out.println("Number of times the user gave a '3' rating"
+				+ count3);
+		System.out.println("Number of times the user gave a '5' rating"
+				+ count5);
+		System.out.println("Average movie rating for this movie: "
+				+ averageRating);
 	}
 
 }

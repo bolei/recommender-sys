@@ -58,4 +58,18 @@ public abstract class Experiment {
 	}
 
 	protected abstract double getPrediction(int movieId, int userId);
+
+	public static Experiment createExperiment(ExperimentType expType,
+			Configurator config, DataIndex index) {
+		switch (ExperimentType.valueOf(config.getProperty("expType"))) {
+		case EXP_0:
+			return new ExperimentZero(config, index);
+		case EXP_1:
+			return new ExperimentOne(config, index);
+		case EXP_2:
+			return new ExperimentTwo(config, index);
+		default:
+			return null;
+		}
+	}
 }
