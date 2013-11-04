@@ -12,6 +12,6 @@ public abstract class RatingEstimator {
 		this.dataIndex = dataIndex;
 	}
 
-	public abstract double estimateRating(Map<Double, Double> kwindow,
+	public abstract double estimateRating(Map<Double, Integer> kwindow,
 			int columnId);
 }

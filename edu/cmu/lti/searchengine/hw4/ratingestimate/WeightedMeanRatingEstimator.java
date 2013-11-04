@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import edu.cmu.lti.searchengine.hw4.DataIndex;
+import edu.cmu.lti.searchengine.hw4.Rating;
 
 public class WeightedMeanRatingEstimator extends RatingEstimator {
 
@@ -16,13 +17,20 @@ public class WeightedMeanRatingEstimator extends RatingEstimator {
 	 * similarity measure from step (1) as the weight.
 	 */
 	@Override
-	public double estimateRating(Map<Double, Double> kwindow, int columnId) {
+	public double estimateRating(Map<Double, Integer> kwindow, int columnId) {
 		double totalWeight = 0;
 		double weightedAverage;
-
+		int vectorId;
+		Rating rating;
 		weightedAverage = 0;
-		for (Entry<Double, Double> entry : kwindow.entrySet()) {
-			weightedAverage += entry.getValue() * entry.getKey();
+		for (Entry<Double, Integer> entry : kwindow.entrySet()) {
+			vectorId = entry.getValue();
+			rating = dataIndex.getDataVector().get(vectorId).getMovieScores()
+					.get(columnId);
+			if (rating != null) {
+				weightedAverage += entry.getKey() * rating.getScore();
+			}
+
 			totalWeight += entry.getKey();
 		}
 		weightedAverage /= totalWeight;

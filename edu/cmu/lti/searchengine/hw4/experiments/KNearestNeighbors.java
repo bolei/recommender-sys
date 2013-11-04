@@ -12,8 +12,10 @@ public class KNearestNeighbors {
 
 	private SimilarityCalculator simCal;
 	private RatingEstimator profEst;
-
 	private int k;
+
+	// k nearest neighbors for each user
+	private HashMap<Integer, FixedSizeTreeMap> cache = new HashMap<Integer, FixedSizeTreeMap>();
 
 	public KNearestNeighbors(int k, SimilarityCalculator simCal,
 			RatingEstimator profEst) {
@@ -24,18 +26,17 @@ public class KNearestNeighbors {
 
 	public double makePrediction(HashMap<Integer, DataRow> train,
 			DataRow query, int columnId) {
-		FixedSizeTreeMap kwindow = new FixedSizeTreeMap(k);
-		double sim, score;
-		for (Entry<Integer, DataRow> entry : train.entrySet()) {
-			sim = simCal.getSimilarity(entry.getValue(), query);
-			if (entry.getValue().getMovieScores().get(columnId) == null) {
-				score = 0d;
-			} else {
-				score = entry.getValue().getMovieScores().get(columnId)
-						.getScore();
+		FixedSizeTreeMap kwindow;
+		if (cache.containsKey(query.getId())) {
+			kwindow = cache.get(query.getId());
+		} else {
+			kwindow = new FixedSizeTreeMap(k);
+			double sim;
+			for (Entry<Integer, DataRow> entry : train.entrySet()) {
+				sim = simCal.getSimilarity(entry.getValue(), query);
+				kwindow.put(sim, entry.getKey());
 			}
-
-			kwindow.put(sim, score);
+			cache.put(query.getId(), kwindow);
 		}
 
 		// now we have the k nearest neighbors
@@ -54,7 +55,7 @@ public class KNearestNeighbors {
 	 * @param <K>
 	 * @param <V>
 	 */
-	private class FixedSizeTreeMap extends TreeMap<Double, Double> {
+	private class FixedSizeTreeMap extends TreeMap<Double, Integer> {
 
 		private static final long serialVersionUID = -3646662497160905763L;
 		private final int MAX_SIZE;
@@ -64,7 +65,7 @@ public class KNearestNeighbors {
 		}
 
 		@Override
-		public Double put(Double key, Double value) {
+		public Integer put(Double key, Integer value) {
 
 			if (this.size() >= MAX_SIZE && !this.containsKey(key)) {
 				// no space

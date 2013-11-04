@@ -29,6 +29,10 @@ public class DataRow {
 		return Math.sqrt(length);
 	}
 
+	public int getId() {
+		return id;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
