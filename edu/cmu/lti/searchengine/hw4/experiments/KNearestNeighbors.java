@@ -25,7 +25,7 @@ public class KNearestNeighbors {
 	}
 
 	public double makePrediction(HashMap<Integer, DataRow> train,
-			DataRow query, int columnId) {
+			DataRow query, int columnId, boolean isByUser) {
 		FixedSizeTreeMap kwindow;
 		if (cache.containsKey(query.getId())) {
 			kwindow = cache.get(query.getId());
@@ -40,7 +40,7 @@ public class KNearestNeighbors {
 		}
 
 		// now we have the k nearest neighbors
-		return profEst.estimateRating(kwindow, columnId);
+		return profEst.estimateRating(kwindow, columnId, isByUser);
 	}
 
 	/**

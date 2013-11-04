@@ -1,9 +1,11 @@
 package edu.cmu.lti.searchengine.hw4.ratingestimate;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import edu.cmu.lti.searchengine.hw4.DataIndex;
+import edu.cmu.lti.searchengine.hw4.DataRow;
 import edu.cmu.lti.searchengine.hw4.Rating;
 
 public class MeanRatingEstimator extends RatingEstimator {
@@ -16,15 +18,23 @@ public class MeanRatingEstimator extends RatingEstimator {
 	 * The mean rating is the average rating of this movie among the neighbors
 	 */
 	@Override
-	public double estimateRating(Map<Double, Integer> kwindow, int columnId) {
+	public double estimateRating(Map<Double, Integer> kwindow, int columnId,
+			boolean isByUser) {
 		int windowSize = kwindow.size(), vectorId;
 		double average;
 		Rating rating;
 		average = 0;
+
+		HashMap<Integer, DataRow> vectorsData;
+		if (isByUser) {
+			vectorsData = dataIndex.getByUserIndex();
+		} else { // byMovie
+			vectorsData = dataIndex.getByMovieIndex();
+		}
+
 		for (Entry<Double, Integer> entry : kwindow.entrySet()) {
 			vectorId = entry.getValue();
-			rating = dataIndex.getByUserIndex().get(vectorId).getMovieScores()
-					.get(columnId);
+			rating = vectorsData.get(vectorId).getMovieScores().get(columnId);
 			if (rating != null) {
 				average += rating.getScore();
 			}

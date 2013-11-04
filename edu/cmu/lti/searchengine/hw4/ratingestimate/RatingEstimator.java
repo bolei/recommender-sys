@@ -13,5 +13,5 @@ public abstract class RatingEstimator {
 	}
 
 	public abstract double estimateRating(Map<Double, Integer> kwindow,
-			int columnId);
+			int columnId, boolean isByUser);
 }
