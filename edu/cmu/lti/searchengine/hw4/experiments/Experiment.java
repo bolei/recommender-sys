@@ -38,13 +38,14 @@ public abstract class Experiment {
 				int movieId = Integer.parseInt(strArr[0]);
 				int userId = Integer.parseInt(strArr[1]);
 
-				double predictVal = getPrediction(movieId, userId);
+				// +3: compensate the impact of imputation
+				double predictVal = getPrediction(movieId, userId) + 3;
 
 				// dump out prediction result
 				bout.write(Double.toString(predictVal));
 				bout.newLine();
 				bout.flush();
-//				System.out.println(predictVal);
+				// System.out.println(predictVal);
 			}
 
 		} finally {
