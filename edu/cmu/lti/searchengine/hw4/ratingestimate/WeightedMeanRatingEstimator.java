@@ -1,12 +1,10 @@
 package edu.cmu.lti.searchengine.hw4.ratingestimate;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import edu.cmu.lti.searchengine.hw4.DataIndex;
 import edu.cmu.lti.searchengine.hw4.DataRow;
-import edu.cmu.lti.searchengine.hw4.Rating;
 
 public class WeightedMeanRatingEstimator extends RatingEstimator {
 
@@ -19,36 +17,22 @@ public class WeightedMeanRatingEstimator extends RatingEstimator {
 	 * similarity measure from step (1) as the weight.
 	 */
 	@Override
-	public DataRow estimateRating(Map<Double, DataRow> kwindow, boolean isByUser) {
+	public double estimateRating(Map<Double, DataRow> kwindow, int columnId) {
 		double totalWeight = 0;
-		DataRow estimated = new DataRow(-1);
 		double weightedAverage;
-		Set<Integer> allIds;
-		if (isByUser) {
-			allIds = dataIndex.getAllMovieIds();
-		} else {
-			allIds = dataIndex.getAllUserIds();
-		}
 
-		// calculate total weight
+		weightedAverage = 0;
 		for (Entry<Double, DataRow> entry : kwindow.entrySet()) {
+			if (entry.getValue().getMovieScores().containsKey(columnId)) {
+				weightedAverage += entry.getValue().getMovieScores()
+						.get(columnId).getScore()
+						* entry.getKey();
+			}
 			totalWeight += entry.getKey();
 		}
+		weightedAverage /= totalWeight;
 
-		for (int id : allIds) {
-			weightedAverage = 0;
-			for (Entry<Double, DataRow> entry : kwindow.entrySet()) {
-				if (entry.getValue().getMovieScores().containsKey(id)) {
-					weightedAverage += entry.getValue().getMovieScores()
-							.get(id).getScore()
-							* entry.getKey();
-				}
-			}
-			weightedAverage /= totalWeight;
-			estimated.addRating(id, new Rating(weightedAverage,
-					"weighted mean rating"));
-		}
-		return estimated;
+		return weightedAverage;
 
 	}
 

@@ -5,8 +5,6 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import edu.cmu.lti.searchengine.hw4.Configurator;
 import edu.cmu.lti.searchengine.hw4.DataIndex;
@@ -22,7 +20,6 @@ public abstract class Experiment {
 
 	public void runExperiment() throws IOException {
 		// <movie Id, sorted <userIds, rating>>
-		TreeMap<Integer, TreeMap<Integer, Double>> predictionResult = new TreeMap<Integer, TreeMap<Integer, Double>>();
 		FileReader fileReader = null;
 		BufferedReader bin = null;
 		FileWriter fileWriter = null;
@@ -41,26 +38,13 @@ public abstract class Experiment {
 				int movieId = Integer.parseInt(strArr[0]);
 				int userId = Integer.parseInt(strArr[1]);
 
-				// put prediction result into result holder
 				double predictVal = getPrediction(movieId, userId);
 
-				if (predictionResult.containsKey(movieId) == false) {
-					predictionResult.put(movieId,
-							new TreeMap<Integer, Double>());
-				}
-
-				// use predicted Value + 3 to offset the imputation impact
-				predictionResult.get(movieId).put(userId, predictVal + 3);
-			}
-
-			// dump out prediction result
-			for (Entry<Integer, TreeMap<Integer, Double>> entry : predictionResult
-					.entrySet()) {
-				for (Entry<Integer, Double> subEntry : entry.getValue()
-						.entrySet()) {
-					bout.write(Double.toString(subEntry.getValue()));
-					bout.newLine();
-				}
+				// dump out prediction result
+				bout.write(Double.toString(predictVal));
+				bout.newLine();
+				bout.flush();
+//				System.out.println(predictVal);
 			}
 
 		} finally {

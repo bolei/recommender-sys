@@ -31,15 +31,13 @@ public class ExperimentTwo extends Experiment {
 			profEst = new WeightedMeanRatingEstimator(indexData);
 		}
 
-		knn = new KNearestNeighbors(k, simCal, profEst, true);
+		knn = new KNearestNeighbors(k, simCal, profEst);
 	}
 
 	@Override
 	protected double getPrediction(int movieId, int userId) {
 		DataRow queryRow = indexData.getDataVector().get(movieId);
-		DataRow predictRow = knn
-				.prediction(indexData.getDataVector(), queryRow);
-		return predictRow.getMovieScores().get(userId).getScore();
+		return knn.makePrediction(indexData.getDataVector(), queryRow, userId);
 	}
 
 }

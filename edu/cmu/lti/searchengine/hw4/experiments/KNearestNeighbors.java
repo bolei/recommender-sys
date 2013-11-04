@@ -14,17 +14,16 @@ public class KNearestNeighbors {
 	private RatingEstimator profEst;
 
 	private int k;
-	private boolean isByUser;
 
 	public KNearestNeighbors(int k, SimilarityCalculator simCal,
-			RatingEstimator profEst, boolean isByUser) {
+			RatingEstimator profEst) {
 		this.k = k;
 		this.simCal = simCal;
 		this.profEst = profEst;
-		this.isByUser = isByUser;
 	}
 
-	public DataRow prediction(HashMap<Integer, DataRow> train, DataRow query) {
+	public double makePrediction(HashMap<Integer, DataRow> train,
+			DataRow query, int columnId) {
 		FixedSizeTreeMap kwindow = new FixedSizeTreeMap(k);
 		double sim;
 		for (Entry<Integer, DataRow> entry : train.entrySet()) {
@@ -33,7 +32,7 @@ public class KNearestNeighbors {
 		}
 
 		// now we have the k nearest neighbors
-		return profEst.estimateRating(kwindow, isByUser);
+		return profEst.estimateRating(kwindow, columnId);
 	}
 
 	/**

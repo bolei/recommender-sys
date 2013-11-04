@@ -13,6 +13,6 @@ public abstract class RatingEstimator {
 		this.dataIndex = dataIndex;
 	}
 
-	public abstract DataRow estimateRating(Map<Double, DataRow> kwindow,
-			boolean isByUser);
+	public abstract double estimateRating(Map<Double, DataRow> kwindow,
+			int columnId);
 }

@@ -5,6 +5,7 @@ import edu.cmu.lti.searchengine.hw4.Configurator;
 import edu.cmu.lti.searchengine.hw4.DataIndex;
 import edu.cmu.lti.searchengine.hw4.IndexBuilder;
 import edu.cmu.lti.searchengine.hw4.experiments.ExperimentOne;
+import edu.cmu.lti.searchengine.hw4.experiments.ExperimentTwo;
 import edu.cmu.lti.searchengine.hw4.experiments.ExperimentType;
 
 public class Recommender {
@@ -35,7 +36,8 @@ public class Recommender {
 		case EXP_1:
 			new ExperimentOne(config, index).runExperiment();
 			break;
-
+		case EXP_2:
+			new ExperimentTwo(config, index).runExperiment();
 		default:
 			break;
 		}
