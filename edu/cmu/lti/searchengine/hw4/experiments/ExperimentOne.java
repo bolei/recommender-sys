@@ -37,8 +37,8 @@ public class ExperimentOne extends Experiment {
 
 	@Override
 	protected double getPrediction(int movieId, int userId) {
-		DataRow queryRow = indexData.getByUserIndex().get(userId);
-		return knn.makePrediction(indexData.getByUserIndex(), queryRow,
+		DataRow queryRow = indexData.getUserToUserIndex().get(userId);
+		return knn.makePrediction(indexData.getUserToUserIndex(), queryRow,
 				movieId, true);
 	}
 }

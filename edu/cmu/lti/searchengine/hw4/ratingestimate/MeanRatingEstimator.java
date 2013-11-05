@@ -19,17 +19,17 @@ public class MeanRatingEstimator extends RatingEstimator {
 	 */
 	@Override
 	public double estimateRating(Map<Double, Integer> kwindow, int columnId,
-			boolean isByUser) {
+			boolean isUserToUser) {
 		int windowSize = kwindow.size(), vectorId;
 		double average;
 		Rating rating;
 		average = 0;
 
 		HashMap<Integer, DataRow> vectorsData;
-		if (isByUser) {
-			vectorsData = dataIndex.getByUserIndex();
+		if (isUserToUser) {
+			vectorsData = dataIndex.getUserToUserIndex();
 		} else { // byMovie
-			vectorsData = dataIndex.getByMovieIndex();
+			vectorsData = dataIndex.getMovieToMovieIndex();
 		}
 
 		for (Entry<Double, Integer> entry : kwindow.entrySet()) {

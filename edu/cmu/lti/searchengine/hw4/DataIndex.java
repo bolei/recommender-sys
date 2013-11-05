@@ -9,15 +9,15 @@ public class DataIndex {
 	private Set<Integer> allUserIds;
 	private Set<Integer> allMovieIds;
 
-	private HashMap<Integer, DataRow> byUserIndex, byMovieIndex;
+	private HashMap<Integer, DataRow> userToUserIndex, movieToMovieIndex;
 
 	public DataIndex(Set<Integer> allUserIds, Set<Integer> allMovieIds,
-			HashMap<Integer, DataRow> byUserIndex,
-			HashMap<Integer, DataRow> byMovieIndex) {
+			HashMap<Integer, DataRow> userToUserIndex,
+			HashMap<Integer, DataRow> movieToMovieIndex) {
 		this.allMovieIds = allMovieIds;
 		this.allUserIds = allUserIds;
-		this.byUserIndex = byUserIndex;
-		this.byMovieIndex = byMovieIndex;
+		this.userToUserIndex = userToUserIndex;
+		this.movieToMovieIndex = movieToMovieIndex;
 	}
 
 	public Set<Integer> getAllUserIds() {
@@ -28,12 +28,12 @@ public class DataIndex {
 		return allMovieIds;
 	}
 
-	public HashMap<Integer, DataRow> getByUserIndex() {
-		return byUserIndex;
+	public HashMap<Integer, DataRow> getUserToUserIndex() {
+		return userToUserIndex;
 	}
 
-	public HashMap<Integer, DataRow> getByMovieIndex() {
-		return byMovieIndex;
+	public HashMap<Integer, DataRow> getMovieToMovieIndex() {
+		return movieToMovieIndex;
 	}
 
 	public void dumpStat() {
@@ -47,7 +47,7 @@ public class DataIndex {
 		double delta = 1e-5;
 
 		TreeMap<Integer, Rating> movieScores;
-		for (Entry<Integer, DataRow> entry : byUserIndex.entrySet()) {
+		for (Entry<Integer, DataRow> entry : userToUserIndex.entrySet()) {
 			movieScores = entry.getValue().getMovieScores();
 			for (Entry<Integer, Rating> movScr : movieScores.entrySet()) {
 				totalCount++;
@@ -72,7 +72,7 @@ public class DataIndex {
 
 		System.out.println("For user ID 1234576");
 		int userId = 1234576;
-		DataRow userRow = byUserIndex.get(userId);
+		DataRow userRow = userToUserIndex.get(userId);
 		count1 = 0;
 		count3 = 0;
 		count5 = 0;
@@ -102,7 +102,7 @@ public class DataIndex {
 
 		System.out.println("For movie ID 4321");
 		int movieId = 4321;
-		DataRow movieRow = byMovieIndex.get(movieId);
+		DataRow movieRow = movieToMovieIndex.get(movieId);
 		count1 = 0;
 		count3 = 0;
 		count5 = 0;

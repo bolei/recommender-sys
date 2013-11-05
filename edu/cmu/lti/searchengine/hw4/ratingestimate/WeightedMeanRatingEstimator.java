@@ -20,7 +20,7 @@ public class WeightedMeanRatingEstimator extends RatingEstimator {
 	 */
 	@Override
 	public double estimateRating(Map<Double, Integer> kwindow, int columnId,
-			boolean isByUser) {
+			boolean isUserToUser) {
 		double totalWeight = 0;
 		double weightedAverage;
 		int vectorId;
@@ -28,10 +28,10 @@ public class WeightedMeanRatingEstimator extends RatingEstimator {
 		weightedAverage = 0;
 
 		HashMap<Integer, DataRow> vectorsData;
-		if (isByUser) {
-			vectorsData = dataIndex.getByUserIndex();
+		if (isUserToUser) {
+			vectorsData = dataIndex.getUserToUserIndex();
 		} else { // byMovie
-			vectorsData = dataIndex.getByMovieIndex();
+			vectorsData = dataIndex.getMovieToMovieIndex();
 		}
 
 		for (Entry<Double, Integer> entry : kwindow.entrySet()) {
@@ -43,8 +43,11 @@ public class WeightedMeanRatingEstimator extends RatingEstimator {
 
 			totalWeight += entry.getKey();
 		}
-		weightedAverage /= totalWeight;
-
+		if (Math.abs(totalWeight) < 1e-5) { // very close to zero
+			weightedAverage = 0;
+		} else {
+			weightedAverage /= totalWeight;
+		}
 		return weightedAverage;
 
 	}
