@@ -25,7 +25,7 @@ public abstract class SimilarityCalculator {
 	public static SimilarityCalculator createSimilarityCalculator(String typeStr) {
 		SimilarityCalculator simCal;
 		if (typeStr.equals("kld")) { // kl divergence
-			simCal = new KLDivergenceSimilarityCalculator();
+			simCal = new RatingValueKLDivergenceSimilarityCalculator();
 		} else if (typeStr.equals("cosine")) { // cosine
 			simCal = new CosineSimilarityCalculator();
 		} else { // default dot product

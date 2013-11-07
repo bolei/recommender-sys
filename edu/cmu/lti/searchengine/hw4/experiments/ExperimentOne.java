@@ -2,7 +2,6 @@ package edu.cmu.lti.searchengine.hw4.experiments;
 
 import edu.cmu.lti.searchengine.hw4.Configurator;
 import edu.cmu.lti.searchengine.hw4.DataIndex;
-import edu.cmu.lti.searchengine.hw4.DataRow;
 import edu.cmu.lti.searchengine.hw4.ratingestimate.MeanRatingEstimator;
 import edu.cmu.lti.searchengine.hw4.ratingestimate.RatingEstimator;
 import edu.cmu.lti.searchengine.hw4.ratingestimate.WeightedMeanRatingEstimator;
@@ -32,14 +31,13 @@ public class ExperimentOne extends Experiment {
 
 	@Override
 	protected double getPrediction(int movieId, int userId) {
-		DataRow queryRow = indexData.getUserToUserIndex().get(userId);
 		boolean considerTime = Boolean.parseBoolean(config
 				.getProperty("considerTime"));
 		long timeWindow = 0;
 		if (considerTime == true) {
 			timeWindow = Long.parseLong(config.getProperty("timeWindow"));
 		}
-		return knn.makePrediction(indexData.getUserToUserIndex(), queryRow,
+		return knn.makePrediction(indexData.getUserToUserIndex(), userId,
 				movieId, true, considerTime, timeWindow);
 	}
 }

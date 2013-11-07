@@ -5,8 +5,8 @@ import java.util.Map.Entry;
 import edu.cmu.lti.searchengine.hw4.DataRow;
 import edu.cmu.lti.searchengine.hw4.Rating;
 
-public class KLDivergenceSimilarityCalculator extends SimilarityCalculator {
-
+public class RatingValueKLDivergenceSimilarityCalculator extends
+		SimilarityCalculator {
 	@Override
 	public double getSimilarity(DataRow row1, DataRow row2) {
 		double row1Sum = 0;

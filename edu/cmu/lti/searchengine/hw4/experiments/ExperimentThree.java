@@ -77,8 +77,10 @@ public class ExperimentThree extends Experiment {
 				continue; // all zeros, no need to standardize
 			}
 			for (Integer columnId : vector.keySet()) {
-				rowCopy.addRating(columnId, new Rating((vector.get(columnId)
-						.getScore() - mean) / vecLen, 0l));
+				rowCopy.addRating(
+						columnId,
+						new Rating((vector.get(columnId).getScore() - mean)
+								/ vecLen, (vector.get(columnId).getTimeStamp())));
 			}
 		}
 	}
@@ -93,12 +95,10 @@ public class ExperimentThree extends Experiment {
 		}
 
 		if (isUserToUser) {
-			DataRow queryRow = standardized.get(userId);
-			return knn.makePrediction(standardized, queryRow, movieId,
+			return knn.makePrediction(standardized, userId, movieId,
 					isUserToUser, considerTime, timeWindow);
 		} else {
-			DataRow queryRow = standardized.get(movieId);
-			return knn.makePrediction(standardized, queryRow, userId,
+			return knn.makePrediction(standardized, movieId, userId,
 					isUserToUser, considerTime, timeWindow);
 		}
 

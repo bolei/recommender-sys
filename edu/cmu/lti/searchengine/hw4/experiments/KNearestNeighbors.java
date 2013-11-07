@@ -55,9 +55,11 @@ public class KNearestNeighbors {
 		System.out.println(Arrays.toString(kwindow));
 	}
 
-	public double makePrediction(HashMap<Integer, DataRow> train,
-			DataRow query, int columnId, boolean isUserToUser,
-			boolean considerTime, long timeWindow) {
+	public double makePrediction(HashMap<Integer, DataRow> train, int queryId,
+			int columnId, boolean isUserToUser, boolean considerTime,
+			long timeWindow) {
+
+		DataRow query = train.get(queryId);
 
 		ElemIdSimilarityPair[] kwindow = getKwindow(train, query, simCal,
 				considerTime, columnId, timeWindow);
