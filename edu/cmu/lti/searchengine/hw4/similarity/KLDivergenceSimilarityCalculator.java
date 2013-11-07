@@ -53,6 +53,6 @@ public class KLDivergenceSimilarityCalculator extends SimilarityCalculator {
 			}
 		}
 		kld /= row1Sum;
-		return kld;
+		return kld == 0 ? Double.MAX_VALUE : 1 / kld;
 	}
 }
