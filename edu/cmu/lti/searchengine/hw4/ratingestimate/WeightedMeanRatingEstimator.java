@@ -37,13 +37,13 @@ public class WeightedMeanRatingEstimator extends RatingEstimator {
 		for (ElemIdSimilarityPair elemPair : kwindow) {
 			vectorId = elemPair.getElemId();
 			rating = vectorsData.get(vectorId).getMovieScores().get(columnId);
-			int size = vectorsData.get(vectorId).getMovieScores().size();
 			if (rating != null) {
 				weightedAverage += elemPair.getSimilarity() * rating.getScore();
 			} else {
 
 				// use the average rating
-				int totalRating = 0;
+				double totalRating = 0;
+				int size = vectorsData.get(vectorId).getMovieScores().size();
 				for (Entry<Integer, Rating> movieRatingEntry : vectorsData
 						.get(vectorId).getMovieScores().entrySet()) {
 					totalRating += movieRatingEntry.getValue().getScore();
