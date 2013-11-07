@@ -1,11 +1,11 @@
 package edu.cmu.lti.searchengine.hw4.ratingestimate;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import edu.cmu.lti.searchengine.hw4.DataIndex;
 import edu.cmu.lti.searchengine.hw4.DataRow;
+import edu.cmu.lti.searchengine.hw4.ElemIdSimilarityPair;
 import edu.cmu.lti.searchengine.hw4.Rating;
 
 public class WeightedMeanRatingEstimator extends RatingEstimator {
@@ -19,7 +19,7 @@ public class WeightedMeanRatingEstimator extends RatingEstimator {
 	 * similarity measure from step (1) as the weight.
 	 */
 	@Override
-	public double estimateRating(Map<Double, Integer> kwindow, int columnId,
+	public double estimateRating(ElemIdSimilarityPair[] kwindow, int columnId,
 			boolean isUserToUser) {
 		double totalWeight = 0;
 		double weightedAverage;
@@ -34,22 +34,31 @@ public class WeightedMeanRatingEstimator extends RatingEstimator {
 			vectorsData = dataIndex.getMovieToMovieIndex();
 		}
 
-		for (Entry<Double, Integer> entry : kwindow.entrySet()) {
-			vectorId = entry.getValue();
+		for (ElemIdSimilarityPair elemPair : kwindow) {
+			vectorId = elemPair.getElemId();
 			rating = vectorsData.get(vectorId).getMovieScores().get(columnId);
+			int size = vectorsData.get(vectorId).getMovieScores().size();
 			if (rating != null) {
-				weightedAverage += entry.getKey() * rating.getScore();
-			}
+				weightedAverage += elemPair.getSimilarity() * rating.getScore();
+			} else {
 
-			totalWeight += entry.getKey();
+				// use the average rating
+				int totalRating = 0;
+				for (Entry<Integer, Rating> movieRatingEntry : vectorsData
+						.get(vectorId).getMovieScores().entrySet()) {
+					totalRating += movieRatingEntry.getValue().getScore();
+				}
+				weightedAverage += (elemPair.getSimilarity() * (totalRating / size));
+			}
+			totalWeight += elemPair.getSimilarity();
 		}
+
 		if (Math.abs(totalWeight) < 1e-5) { // very close to zero
 			weightedAverage = 0;
 		} else {
 			weightedAverage /= totalWeight;
 		}
 		return weightedAverage;
-
 	}
 
 }

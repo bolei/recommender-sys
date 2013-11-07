@@ -1,11 +1,11 @@
 package edu.cmu.lti.searchengine.hw4.ratingestimate;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import edu.cmu.lti.searchengine.hw4.DataIndex;
 import edu.cmu.lti.searchengine.hw4.DataRow;
+import edu.cmu.lti.searchengine.hw4.ElemIdSimilarityPair;
 import edu.cmu.lti.searchengine.hw4.Rating;
 
 public class MeanRatingEstimator extends RatingEstimator {
@@ -18,12 +18,11 @@ public class MeanRatingEstimator extends RatingEstimator {
 	 * The mean rating is the average rating of this movie among the neighbors
 	 */
 	@Override
-	public double estimateRating(Map<Double, Integer> kwindow, int columnId,
+	public double estimateRating(ElemIdSimilarityPair[] kwindow, int columnId,
 			boolean isUserToUser) {
-		int windowSize = kwindow.size(), vectorId;
-		double average;
+		int vectorId;
+		double average = 0;
 		Rating rating;
-		average = 0;
 
 		HashMap<Integer, DataRow> vectorsData;
 		if (isUserToUser) {
@@ -32,16 +31,26 @@ public class MeanRatingEstimator extends RatingEstimator {
 			vectorsData = dataIndex.getMovieToMovieIndex();
 		}
 
-		for (Entry<Double, Integer> entry : kwindow.entrySet()) {
-			vectorId = entry.getValue();
+		for (ElemIdSimilarityPair pair : kwindow) {
+			vectorId = pair.getElemId();
 			rating = vectorsData.get(vectorId).getMovieScores().get(columnId);
 			if (rating != null) {
 				average += rating.getScore();
+			} else {
+				int size = vectorsData.get(vectorId).getMovieScores().size();
+				double totalRating = 0;
+				for (Entry<Integer, Rating> movieRatingEntry : vectorsData
+						.get(vectorId).getMovieScores().entrySet()) {
+					totalRating += movieRatingEntry.getValue().getScore();
+				}
+				average += (totalRating / size);
 			}
 		}
-		average /= windowSize;
+
+		// get the mean of existing value
+
+		average /= kwindow.length;
 		return average;
 
 	}
-
 }

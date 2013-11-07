@@ -2,7 +2,7 @@ package edu.cmu.lti.searchengine.hw4.similarity;
 
 import edu.cmu.lti.searchengine.hw4.DataRow;
 
-public class CosineSimilarityCalculator implements SimilarityCalculator {
+public class CosineSimilarityCalculator extends SimilarityCalculator {
 
 	private DotProductSimilarityCalculator dotSimCal = new DotProductSimilarityCalculator();
 

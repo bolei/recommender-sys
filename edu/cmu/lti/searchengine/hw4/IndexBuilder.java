@@ -4,12 +4,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.HashSet;
 
 public class IndexBuilder {
 
-	public DataIndex buildIndex(File trainingFile) throws IOException {
+	public DataIndex buildIndex(File trainingFile) throws IOException,
+			ParseException {
 		FileReader fileReader = null;
 		BufferedReader bin = null;
 
@@ -36,7 +38,8 @@ public class IndexBuilder {
 				score = Double.parseDouble(strArr[2]);
 				dateStr = strArr[3];
 				// (score - 3) to apply missing value imputation
-				rating = new Rating(score - 3, dateStr);
+				rating = new Rating(score, Configurator.df.parse(dateStr)
+						.getTime());
 				// by user
 				if (byUserIndex.containsKey(userId) == false) {
 					byUserIndex.put(userId, new DataRow(userId));

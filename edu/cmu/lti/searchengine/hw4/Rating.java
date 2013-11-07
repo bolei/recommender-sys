@@ -1,26 +1,32 @@
 package edu.cmu.lti.searchengine.hw4;
 
+import java.util.Date;
+
 public class Rating {
 
 	private double score;
-	private String dateStr;
+	private long timeStamp;
 
-	public Rating(double s, String d) {
-		this.score = s;
-		this.dateStr = d;
+	public Rating(double s, long timeStamp) {
+		score = s;
+		this.timeStamp = timeStamp;
 	}
 
 	@Override
 	public String toString() {
-		return score + ", " + dateStr;
+		return score + ", " + Configurator.df.format(new Date(timeStamp));
 	}
 
 	public double getScore() {
 		return score;
 	}
 
-	public String getDateStr() {
-		return dateStr;
+	public void setScore(double score) {
+		this.score = score;
+	}
+
+	public long getTimeStamp() {
+		return timeStamp;
 	}
 
 }

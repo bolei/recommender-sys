@@ -1,8 +1,7 @@
 package edu.cmu.lti.searchengine.hw4.ratingestimate;
 
-import java.util.Map;
-
 import edu.cmu.lti.searchengine.hw4.DataIndex;
+import edu.cmu.lti.searchengine.hw4.ElemIdSimilarityPair;
 
 public abstract class RatingEstimator {
 
@@ -12,6 +11,6 @@ public abstract class RatingEstimator {
 		this.dataIndex = dataIndex;
 	}
 
-	public abstract double estimateRating(Map<Double, Integer> kwindow,
+	public abstract double estimateRating(ElemIdSimilarityPair[] kwindow,
 			int columnId, boolean isUserToUser);
 }

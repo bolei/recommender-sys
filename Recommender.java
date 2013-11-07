@@ -1,5 +1,4 @@
 import java.io.File;
-import java.io.IOException;
 
 import edu.cmu.lti.searchengine.hw4.Configurator;
 import edu.cmu.lti.searchengine.hw4.DataIndex;
@@ -9,7 +8,7 @@ import edu.cmu.lti.searchengine.hw4.experiments.ExperimentType;
 
 public class Recommender {
 
-	public static void main(String[] argv) throws IOException {
+	public static void main(String[] argv) throws Exception {
 		long begin = System.currentTimeMillis();
 
 		Configurator config = new Configurator(argv);

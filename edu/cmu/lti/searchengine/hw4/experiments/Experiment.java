@@ -38,8 +38,7 @@ public abstract class Experiment {
 				int movieId = Integer.parseInt(strArr[0]);
 				int userId = Integer.parseInt(strArr[1]);
 
-				// +3: compensate the impact of imputation
-				double predictVal = getPrediction(movieId, userId) + 3;
+				double predictVal = getPrediction(movieId, userId);
 
 				// dump out prediction result
 				bout.write(Double.toString(predictVal));
@@ -68,6 +67,10 @@ public abstract class Experiment {
 			return new ExperimentOne(config, index);
 		case EXP_2:
 			return new ExperimentTwo(config, index);
+		case EXP_3:
+			return new ExperimentThree(config, index);
+		case EXP_SHOWNEIGHBOR:
+			return new ExperimentShowNeighbor(config, index);
 		default:
 			return null;
 		}

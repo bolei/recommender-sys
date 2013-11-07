@@ -4,6 +4,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 import edu.cmu.lti.searchengine.hw4.experiments.ExperimentType;
@@ -14,6 +16,9 @@ public class Configurator extends Properties {
 	public static final String CONFIG_TRAIN_FILE = "trainFile";
 	public static final String CONFIG_TEST_FILE = "testFile";
 	public static final String CONFIG_OUTPUT_FILE = "outputFile";
+
+	// used to convert date string of the format "2001-03-05"
+	public static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 	public Configurator(String[] argv) throws IOException {
 		if (argv.length < 3) {

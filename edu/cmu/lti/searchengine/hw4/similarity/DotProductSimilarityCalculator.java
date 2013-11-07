@@ -6,7 +6,7 @@ import java.util.TreeMap;
 import edu.cmu.lti.searchengine.hw4.Rating;
 import edu.cmu.lti.searchengine.hw4.DataRow;
 
-public class DotProductSimilarityCalculator implements SimilarityCalculator {
+public class DotProductSimilarityCalculator extends SimilarityCalculator {
 
 	@Override
 	public double getSimilarity(DataRow row1, DataRow row2) {

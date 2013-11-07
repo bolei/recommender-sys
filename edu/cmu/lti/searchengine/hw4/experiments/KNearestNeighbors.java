@@ -1,10 +1,11 @@
 package edu.cmu.lti.searchengine.hw4.experiments;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import edu.cmu.lti.searchengine.hw4.DataRow;
+import edu.cmu.lti.searchengine.hw4.ElemIdSimilarityPair;
 import edu.cmu.lti.searchengine.hw4.ratingestimate.RatingEstimator;
 import edu.cmu.lti.searchengine.hw4.similarity.SimilarityCalculator;
 
@@ -15,7 +16,7 @@ public class KNearestNeighbors {
 	private int k;
 
 	// k nearest neighbors for each user
-	private HashMap<Integer, FixedSizeTreeMap> cache = new HashMap<Integer, FixedSizeTreeMap>();
+	private HashMap<Integer, ElemIdSimilarityPair[]> cache = new HashMap<Integer, ElemIdSimilarityPair[]>();
 
 	public KNearestNeighbors(int k, SimilarityCalculator simCal,
 			RatingEstimator profEst) {
@@ -24,68 +25,88 @@ public class KNearestNeighbors {
 		this.profEst = profEst;
 	}
 
-	public double makePrediction(HashMap<Integer, DataRow> train,
-			DataRow query, int columnId, boolean isUserToUser) {
-		FixedSizeTreeMap kwindow;
-		if (cache.containsKey(query.getId())) {
-			kwindow = cache.get(query.getId());
-		} else {
-			kwindow = new FixedSizeTreeMap(k);
-			double sim;
-			for (Entry<Integer, DataRow> entry : train.entrySet()) {
-				sim = simCal.getSimilarity(entry.getValue(), query);
-				kwindow.put(sim, entry.getKey());
+	public void printNeighbors(HashMap<Integer, DataRow> train, DataRow query,
+			SimilarityCalculator simCal) {
+		ElemIdSimilarityPair[] kwindow = new ElemIdSimilarityPair[k];
+		int elemCnt = 0;
+		double sim;
+		for (Entry<Integer, DataRow> entry : train.entrySet()) {
+			if (entry.getKey() == query.getId()) {
+				// exclude the row itself
+				continue;
 			}
-			cache.put(query.getId(), kwindow);
+			sim = simCal.getSimilarity(entry.getValue(), query);
+
+			// put <userId, similarity> into kwindow
+			if (elemCnt < k) { // there's still space
+				kwindow[elemCnt] = new ElemIdSimilarityPair(entry.getKey(), sim);
+				elemCnt++;
+				if (elemCnt == k) {
+					Arrays.sort(kwindow);
+				}
+			} else {
+				if (sim <= kwindow[0].getSimilarity()) {
+					continue;
+				}
+				kwindow[0] = new ElemIdSimilarityPair(entry.getKey(), sim);
+				Arrays.sort(kwindow);
+			}
 		}
+		System.out.println(Arrays.toString(kwindow));
+	}
+
+	public double makePrediction(HashMap<Integer, DataRow> train,
+			DataRow query, int columnId, boolean isUserToUser,
+			boolean considerTime, long timeWindow) {
+
+		ElemIdSimilarityPair[] kwindow = getKwindow(train, query, simCal,
+				considerTime, columnId, timeWindow);
 
 		// now we have the k nearest neighbors
 		return profEst.estimateRating(kwindow, columnId, isUserToUser);
 	}
 
-	/**
-	 * @author bolei <br/>
-	 *         Map sorted by key. Size fixed to MAX_SIZE<br/>
-	 *         if size < MAX_SIZE, put a new item into map<br/>
-	 *         if size >= MAX_SIZE && new item's key not greater than least key
-	 *         in map, do not insert<br/>
-	 *         if size >= MAX_SIZE && new item's key great than least key in
-	 *         map, remove least key value pair in map, insert the new item
-	 * 
-	 * @param <K>
-	 * @param <V>
-	 */
-	private class FixedSizeTreeMap extends TreeMap<Double, Integer> {
-
-		private static final long serialVersionUID = -3646662497160905763L;
-		private final int MAX_SIZE;
-
-		public FixedSizeTreeMap(int k) {
-			MAX_SIZE = k;
-		}
-
-		@Override
-		public Integer put(Double key, Integer value) {
-
-			if (this.size() >= MAX_SIZE && !this.containsKey(key)) {
-				// no space
-				Double leastKey = this.firstKey();
-				if (key - leastKey < 0.d) {
-					// do nothing
-					return null;
-				} else {
-					// remove the least value object
-					this.remove(leastKey);
-
-					// then add
-					super.put(key, value); // O(nlogn)
-					return null;
+	private ElemIdSimilarityPair[] getKwindow(HashMap<Integer, DataRow> train,
+			DataRow query, SimilarityCalculator simCal, boolean considerTime,
+			int columnId, long timeWindow) {
+		ElemIdSimilarityPair[] kwindow;
+		if (cache.containsKey(query.getId())) {
+			kwindow = cache.get(query.getId());
+		} else {
+			kwindow = new ElemIdSimilarityPair[k];
+			int elemCnt = 0;
+			double sim;
+			for (Entry<Integer, DataRow> entry : train.entrySet()) {
+				if (entry.getKey() == query.getId()) {
+					// exclude the row itself
+					continue;
 				}
-			} else { // there's still space in the map
-				super.put(key, value);
-				return null;
+				if (considerTime == true) {
+					sim = simCal.getSimilarity(entry.getValue(), query,
+							columnId, timeWindow);
+				} else {
+					sim = simCal.getSimilarity(entry.getValue(), query);
+				}
+
+				// put <userId, similarity> into kwindow
+				if (elemCnt < k) { // there's still space
+					kwindow[elemCnt] = new ElemIdSimilarityPair(entry.getKey(),
+							sim);
+					elemCnt++;
+					if (elemCnt == k) {
+						Arrays.sort(kwindow);
+					}
+				} else {
+					if (sim <= kwindow[0].getSimilarity()) {
+						continue;
+					}
+					kwindow[0] = new ElemIdSimilarityPair(entry.getKey(), sim);
+					Arrays.sort(kwindow);
+				}
 			}
+			cache.put(query.getId(), kwindow);
 		}
+		return kwindow;
 	}
 
 }

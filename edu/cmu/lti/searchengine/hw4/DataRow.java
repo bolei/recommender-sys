@@ -16,6 +16,10 @@ public class DataRow {
 		movieScores.put(itemId, rating);
 	}
 
+	public void addAllRating(TreeMap<Integer, Rating> movieScores) {
+		this.movieScores.putAll(movieScores);
+	}
+
 	public TreeMap<Integer, Rating> getMovieScores() {
 		return movieScores;
 	}

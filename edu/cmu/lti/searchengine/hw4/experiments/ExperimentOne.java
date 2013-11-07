@@ -6,8 +6,6 @@ import edu.cmu.lti.searchengine.hw4.DataRow;
 import edu.cmu.lti.searchengine.hw4.ratingestimate.MeanRatingEstimator;
 import edu.cmu.lti.searchengine.hw4.ratingestimate.RatingEstimator;
 import edu.cmu.lti.searchengine.hw4.ratingestimate.WeightedMeanRatingEstimator;
-import edu.cmu.lti.searchengine.hw4.similarity.CosineSimilarityCalculator;
-import edu.cmu.lti.searchengine.hw4.similarity.DotProductSimilarityCalculator;
 import edu.cmu.lti.searchengine.hw4.similarity.SimilarityCalculator;
 
 public class ExperimentOne extends Experiment {
@@ -18,12 +16,9 @@ public class ExperimentOne extends Experiment {
 		super(config, indexData);
 		int k = Integer.parseInt(config.getProperty("k"));
 
-		SimilarityCalculator simCal;
-		if (config.getProperty("similarityType").equals("dotp")) {
-			simCal = new DotProductSimilarityCalculator();
-		} else { // cosine
-			simCal = new CosineSimilarityCalculator();
-		}
+		String typeStr = config.getProperty("similarityType");
+		SimilarityCalculator simCal = SimilarityCalculator
+				.createSimilarityCalculator(typeStr);
 
 		RatingEstimator profEst;
 		if (config.getProperty("ratingType").equals("mean")) {
@@ -38,7 +33,13 @@ public class ExperimentOne extends Experiment {
 	@Override
 	protected double getPrediction(int movieId, int userId) {
 		DataRow queryRow = indexData.getUserToUserIndex().get(userId);
+		boolean considerTime = Boolean.parseBoolean(config
+				.getProperty("considerTime"));
+		long timeWindow = 0;
+		if (considerTime == true) {
+			timeWindow = Long.parseLong(config.getProperty("timeWindow"));
+		}
 		return knn.makePrediction(indexData.getUserToUserIndex(), queryRow,
-				movieId, true);
+				movieId, true, considerTime, timeWindow);
 	}
 }
